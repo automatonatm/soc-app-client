@@ -12,6 +12,10 @@ import {Link} from "react-router-dom";
 
 
 
+import {connect} from "react-redux";
+import { signUpUser} from "../store/actions/userActions";
+
+
 const styles =  theme => ({
     pageTitle: {
         margin: '20px auto 20px auto'
@@ -56,41 +60,29 @@ class SignUp extends Component {
             password: '',
             confirmPassword: '',
             handle: '',
-            loading: false,
             error: {}
         }
     }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        this.setState({errors: nextProps.UI.errors})
+    }
+
     handleSubmit = (event) => {
         event.preventDefault()
-        this.setState({
-            loading: true
-        })
+
         const formData = {
             email: this.state.email,
             password: this.state.password,
             handle: this.state.handle,
             confirmPassword: this.state.confirmPassword
         }
-        axios
-            .post('/signup', formData)
-            .then(({data}) => {
-                this.setState({
-                    loading: false
-                })
 
-                localStorage.setItem('FBidToken', `Bearer ${data.token}`);
-                this.props.history.push('/')
-                //console.log(data)
-            })
-            .catch(err => {
-                this.setState({
-                    errors: err.response.data,
-                    loading: false
-                })
-            })
+        this.props.signUpUser(formData, this.props.history)
+
+}
 
 
-    }
 
     handleChange = (event) => {
         this.setState({
@@ -184,7 +176,21 @@ class SignUp extends Component {
 }
 
 SignUp.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    signUpUser: PropTypes.func.isRequired,
+    user: PropTypes.func.isRequired,
+    UI: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(SignUp);
+const mapStateToProps  = (state) =>({
+    user: state.user,
+    UI: state.UI
+})
+
+const mapActionsToProps = {
+    signUpUser
+}
+
+export default connect(
+    mapStateToProps, mapActionsToProps
+)(withStyles(styles)(SignUp));
