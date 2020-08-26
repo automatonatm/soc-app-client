@@ -12,7 +12,6 @@ export  const loginUser = (loginData, history) => (dispatch) => {
             dispatch(getUserData())
             dispatch({type: actionTypes.CLEAR_ERRORS})
             history.push('/')
-
         })
         .catch(err => {
             dispatch({
@@ -48,8 +47,9 @@ export const logoutUser = () => (dispatch) => {
     dispatch({type: actionTypes.SET_UNAUTHENTICATED})
 }
 
-
 export const getUserData = () => (dispatch) => {
+
+    dispatch({type: actionTypes.LOADING_USER})
         axios.get('/user')
             .then(({data}) => {
                 dispatch({
@@ -58,4 +58,27 @@ export const getUserData = () => (dispatch) => {
                 })
             })
             .catch(err => console.log(err))
+}
+
+export const uploadImage = data => (dispatch) => {
+    dispatch({type: actionTypes.LOADING_USER})
+    axios.post(`/user/upload`, data)
+        .then(() => {
+            dispatch(getUserData())
+        })
+        .catch(err => {
+            console.log(err)
+        })
+}
+
+export const updateUserDetails = data => dispatch => {
+    dispatch({type: actionTypes.LOADING_UI})
+    axios.post(`/user`, data)
+        .then(() => {
+            dispatch(getUserData())
+            dispatch({type: actionTypes.CLEAR_ERRORS})
+        })
+        .catch(err => {
+            console.log(err)
+        })
 }

@@ -19,6 +19,7 @@ export default function (state = initialState, action) {
                 ...state,
                 loading: true
             }
+
         case actionTypes.CLEAR_ERRORS:
             return  {
                 ...state,
